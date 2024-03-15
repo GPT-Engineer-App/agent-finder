@@ -71,12 +71,12 @@ const Index = () => {
               </VStack>
             </HStack>
             <Heading size="md" mb={2}>
-              Recent Activity
+              Activity
             </Heading>
             <RecentActivity agent={agent} activities={agent.recentActivity} />
             <Divider my={4} />
             <Heading size="md" mb={2}>
-              Sales History
+              Sales
             </Heading>
             {agent.sales.map((sale, index) => (
               <HStack key={index}>
