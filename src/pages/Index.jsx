@@ -42,6 +42,17 @@ const agents = [
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [expandedSales, setExpandedSales] = useState([]);
+
+  const toggleExpandedSales = (agentId) => {
+    setExpandedSales((prevExpandedSales) => {
+      if (prevExpandedSales.includes(agentId)) {
+        return prevExpandedSales.filter((id) => id !== agentId);
+      } else {
+        return [...prevExpandedSales, agentId];
+      }
+    });
+  };
 
   const filteredAgents = agents.filter((agent) => agent.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -72,16 +83,22 @@ const Index = () => {
                 </VStack>
               </HStack>
               <Spacer />
-              <VStack align="end">
-                <Heading size="md" mb={2}>
-                  Sales
-                </Heading>
-                {agent.sales.map((sale, index) => (
-                  <Text key={index} fontWeight="bold">
-                    {sale.year}: ${(sale.amount / 1000000).toFixed(1)}m
-                  </Text>
-                ))}
-              </VStack>
+              <Box borderRadius="md" boxShadow="md" p={2} cursor="pointer" onClick={() => toggleExpandedSales(agent.id)}>
+                <VStack align="end">
+                  <Heading size="md" mb={2}>
+                    Sales
+                  </Heading>
+                  {expandedSales.includes(agent.id) ? (
+                    agent.sales.map((sale, index) => (
+                      <Text key={index} fontWeight="bold">
+                        {sale.year}: ${(sale.amount / 1000000).toFixed(1)}m
+                      </Text>
+                    ))
+                  ) : (
+                    <Text fontWeight="bold">${(agent.sales[0].amount / 1000000).toFixed(1)}m</Text>
+                  )}
+                </VStack>
+              </Box>
             </HStack>
             <Heading size="md" my={4}>
               Activity
