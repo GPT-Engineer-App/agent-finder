@@ -14,6 +14,11 @@ const agents = [
       { year: 2021, amount: 4500000 },
       { year: 2020, amount: 4000000 },
     ],
+    recentActivity: [
+      { type: "New Listing", address: "123 Main St", date: "2024-03-14" },
+      { type: "Open House", address: "456 Oak Ave", date: "2024-03-12" },
+      { type: "Closed Sale", address: "789 Elm Rd", date: "2024-03-10" },
+    ],
   },
   {
     id: 2,
@@ -25,6 +30,11 @@ const agents = [
       { year: 2022, amount: 6000000 },
       { year: 2021, amount: 5500000 },
       { year: 2020, amount: 5000000 },
+    ],
+    recentActivity: [
+      { type: "Price Change", address: "321 Pine St", date: "2024-03-13" },
+      { type: "New Listing", address: "654 Birch Ln", date: "2024-03-11" },
+      { type: "Open House", address: "987 Cedar Rd", date: "2024-03-09" },
     ],
   },
   // Add more agents here
@@ -71,10 +81,34 @@ const Index = () => {
                 <Text>${sale.amount.toLocaleString()}</Text>
               </HStack>
             ))}
+            <Divider my={4} />
+            <Heading size="md" mb={2}>
+              Recent Activity
+            </Heading>
+            <RecentActivity activities={agent.recentActivity} />
           </Box>
         ))}
       </VStack>
     </Box>
+  );
+};
+
+const RecentActivity = ({ activities }) => {
+  return (
+    <VStack align="stretch" spacing={2}>
+      {activities.map((activity, index) => (
+        <HStack key={index}>
+          <Text fontWeight="bold">{activity.type}:</Text>
+          <Spacer />
+          <VStack align="end">
+            <Text>{activity.address}</Text>
+            <Text fontSize="sm" color="gray.500">
+              {activity.date}
+            </Text>
+          </VStack>
+        </HStack>
+      ))}
+    </VStack>
   );
 };
 
