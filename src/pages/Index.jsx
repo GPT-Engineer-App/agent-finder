@@ -89,27 +89,13 @@ const Index = () => {
                     Sales
                   </Heading>
                   {expandedSales.includes(agent.id) ? (
-                    <>
-                      <HStack spacing={4}>
-                        {agent.sales.map((sale, index) => (
-                          <Text key={index} fontWeight="bold">
-                            {sale.year}
-                          </Text>
-                        ))}
-                      </HStack>
-                      <HStack spacing={4}>
-                        {agent.sales.map((sale, index) => (
-                          <Text key={index} fontWeight="bold">
-                            ${(sale.amount / 1000000).toFixed(1)}m
-                          </Text>
-                        ))}
-                      </HStack>
-                    </>
+                    agent.sales.map((sale, index) => (
+                      <Text key={index} fontWeight="bold">
+                        {sale.year}: ${(sale.amount / 1000000).toFixed(1)}m
+                      </Text>
+                    ))
                   ) : (
-                    <>
-                      <Text fontWeight="bold">{agent.sales[0].year}</Text>
-                      <Text fontWeight="bold">${(agent.sales[0].amount / 1000000).toFixed(1)}m</Text>
-                    </>
+                    <Text fontWeight="bold">${(agent.sales[0].amount / 1000000).toFixed(1)}m</Text>
                   )}
                 </VStack>
               </Box>
