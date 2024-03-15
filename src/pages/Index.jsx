@@ -54,37 +54,39 @@ const Index = () => {
       <VStack spacing={4} align="stretch">
         {filteredAgents.map((agent) => (
           <Box key={agent.id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4}>
-            <HStack spacing={4}>
-              <Avatar size="lg" src={agent.photo} />
-              <VStack align="start" spacing={1}>
-                <Text fontSize="xl" fontWeight="bold">
-                  {agent.name}
-                </Text>
-                <HStack>
-                  <FaPhone />
-                  <Text>{agent.phone}</Text>
-                </HStack>
-                <HStack>
-                  <FaEnvelope />
-                  <Text>{agent.email}</Text>
-                </HStack>
+            <HStack spacing={4} align="start">
+              <HStack spacing={4}>
+                <Avatar size="lg" src={agent.photo} />
+                <VStack align="start" spacing={1}>
+                  <Text fontSize="xl" fontWeight="bold">
+                    {agent.name}
+                  </Text>
+                  <HStack>
+                    <FaPhone />
+                    <Text>{agent.phone}</Text>
+                  </HStack>
+                  <HStack>
+                    <FaEnvelope />
+                    <Text>{agent.email}</Text>
+                  </HStack>
+                </VStack>
+              </HStack>
+              <Spacer />
+              <VStack align="end">
+                <Heading size="md" mb={2}>
+                  Sales
+                </Heading>
+                {agent.sales.map((sale, index) => (
+                  <Text key={index} fontWeight="bold">
+                    {sale.year}: ${(sale.amount / 1000000).toFixed(1)}m
+                  </Text>
+                ))}
               </VStack>
             </HStack>
-            <Heading size="md" mb={2}>
+            <Heading size="md" my={4}>
               Activity
             </Heading>
             <RecentActivity agent={agent} activities={agent.recentActivity} />
-            <Divider my={4} />
-            <Heading size="md" mb={2}>
-              Sales
-            </Heading>
-            {agent.sales.map((sale, index) => (
-              <HStack key={index}>
-                <Text fontWeight="bold">{sale.year}:</Text>
-                <Spacer />
-                <Text>${sale.amount.toLocaleString()}</Text>
-              </HStack>
-            ))}
           </Box>
         ))}
       </VStack>
