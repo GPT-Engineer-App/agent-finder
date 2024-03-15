@@ -83,21 +83,13 @@ const Index = () => {
                 </VStack>
               </HStack>
               <Spacer />
-              <Box borderRadius="md" boxShadow="md" p={2} cursor="pointer" onClick={() => toggleExpandedSales(agent.id)}>
-                <VStack align="end">
-                  <Heading size="md" mb={2}>
-                    Sales
-                  </Heading>
-                  {expandedSales.includes(agent.id) ? (
-                    agent.sales.map((sale, index) => (
-                      <Text key={index} fontWeight="bold">
-                        {sale.year}: ${(sale.amount / 1000000).toFixed(1)}m
-                      </Text>
-                    ))
-                  ) : (
-                    <Text fontWeight="bold">${(agent.sales[0].amount / 1000000).toFixed(1)}m</Text>
-                  )}
-                </VStack>
+              <Box borderRadius="full" bg="gray.100" px={3} py={1}>
+                <HStack spacing={1}>
+                  <Text fontSize="sm">$</Text>
+                  <Text fontSize="sm" fontWeight="bold">
+                    {(agent.sales[0].amount / 1000000).toFixed(1)}m
+                  </Text>
+                </HStack>
               </Box>
             </HStack>
             <Heading size="md" my={4}>
