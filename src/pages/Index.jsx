@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Text, Image, VStack, HStack, Avatar, Input, Button, Heading, Divider, Spacer } from "@chakra-ui/react";
+import { Box, Text, Image, VStack, HStack, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
 import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
 
 const agents = [
@@ -40,9 +40,34 @@ const agents = [
   // Add more agents here
 ];
 
+const SearchFilters = ({ filters, onFilterChange }) => {
+  return (
+    <Wrap spacing={2} mb={4}>
+      {filters.map((filter) => (
+        <WrapItem key={filter.value}>
+          <Button size="sm" colorScheme={filter.selected ? "blue" : "gray"} onClick={() => onFilterChange(filter.value)}>
+            {filter.label}
+          </Button>
+        </WrapItem>
+      ))}
+    </Wrap>
+  );
+};
+
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedSales, setExpandedSales] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState([]);
+
+  const handleFilterChange = (filterValue) => {
+    setSelectedFilters((prevFilters) => {
+      if (prevFilters.includes(filterValue)) {
+        return prevFilters.filter((value) => value !== filterValue);
+      } else {
+        return [...prevFilters, filterValue];
+      }
+    });
+  };
 
   const toggleExpandedSales = (agentId) => {
     setExpandedSales((prevExpandedSales) => {
@@ -54,7 +79,11 @@ const Index = () => {
     });
   };
 
-  const filteredAgents = agents.filter((agent) => agent.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredAgents = agents.filter((agent) => {
+    const nameMatch = agent.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const filterMatch = selectedFilters.length === 0 || agent.recentActivity.some((activity) => selectedFilters.includes(activity.type));
+    return nameMatch && filterMatch;
+  });
 
   return (
     <Box p={4}>
@@ -62,6 +91,15 @@ const Index = () => {
         Real Estate Agents
       </Heading>
       <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} />
+      <SearchFilters
+        filters={[
+          { label: "New Listings", value: "New Listing" },
+          { label: "Closed Sale", value: "Closed Sale" },
+          { label: "Open House", value: "Open House" },
+          { label: "Price Change", value: "Price Change" },
+        ]}
+        onFilterChange={handleFilterChange}
+      />
       <VStack spacing={4} align="stretch">
         {filteredAgents.map((agent) => (
           <Box key={agent.id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4}>
