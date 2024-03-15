@@ -70,22 +70,24 @@ const Index = () => {
                 </HStack>
               </VStack>
             </HStack>
-            <Divider my={4} />
-            <Heading size="md" mb={2}>
-              Sales History
-            </Heading>
-            {agent.sales.map((sale, index) => (
-              <HStack key={index}>
-                <Text fontWeight="bold">{sale.year}:</Text>
-                <Spacer />
-                <Text>${sale.amount.toLocaleString()}</Text>
-              </HStack>
-            ))}
-            <Divider my={4} />
-            <Heading size="md" mb={2}>
-              Recent Activity
-            </Heading>
-            <RecentActivity agent={agent} activities={agent.recentActivity} />
+            <Box bg="gray.100" p={4} borderRadius="md" mb={4}>
+              <Heading size="md" mb={2}>
+                Recent Activity
+              </Heading>
+              <RecentActivity agent={agent} activities={agent.recentActivity} />
+            </Box>
+            <Box bg="gray.200" p={4} borderRadius="md">
+              <Heading size="md" mb={2}>
+                Sales History
+              </Heading>
+              {agent.sales.map((sale, index) => (
+                <HStack key={index}>
+                  <Text fontWeight="bold">{sale.year}:</Text>
+                  <Spacer />
+                  <Text>${sale.amount.toLocaleString()}</Text>
+                </HStack>
+              ))}
+            </Box>
           </Box>
         ))}
       </VStack>
