@@ -104,7 +104,7 @@ const Index = () => {
                   <HStack spacing={1}>
                     <FaStar />
                     <Text fontSize="sm" fontWeight="bold">
-                      Favorite
+                      Fav
                     </Text>
                   </HStack>
                 </Box>
