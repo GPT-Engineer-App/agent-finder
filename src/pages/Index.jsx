@@ -70,6 +70,10 @@ const Index = () => {
                 </HStack>
               </VStack>
             </HStack>
+            <Heading size="md" mb={2}>
+              Recent Activity
+            </Heading>
+            <RecentActivity agent={agent} activities={agent.recentActivity} />
             <Divider my={4} />
             <Heading size="md" mb={2}>
               Sales History
@@ -81,11 +85,6 @@ const Index = () => {
                 <Text>${sale.amount.toLocaleString()}</Text>
               </HStack>
             ))}
-            <Divider my={4} />
-            <Heading size="md" mb={2}>
-              Recent Activity
-            </Heading>
-            <RecentActivity agent={agent} activities={agent.recentActivity} />
           </Box>
         ))}
       </VStack>
