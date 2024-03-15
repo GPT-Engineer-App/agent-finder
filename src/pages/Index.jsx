@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Text, Image, VStack, HStack, Avatar, Input, Button, Heading, Divider, Spacer } from "@chakra-ui/react";
-import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar } from "react-icons/fa";
+import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
 
 const agents = [
   {
@@ -97,6 +97,14 @@ const Index = () => {
                     <FaCalendar />
                     <Text fontSize="sm" fontWeight="bold">
                       {agent.sales.length} yrs
+                    </Text>
+                  </HStack>
+                </Box>
+                <Box borderRadius="full" bg="gray.100" px={3} py={1}>
+                  <HStack spacing={1}>
+                    <FaStar />
+                    <Text fontSize="sm" fontWeight="bold">
+                      Favorite
                     </Text>
                   </HStack>
                 </Box>
