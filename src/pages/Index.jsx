@@ -84,7 +84,7 @@ const Index = () => {
               </HStack>
               <Spacer />
               <VStack spacing={1}>
-                <Box borderRadius="full" bg="gray.100" px={3} py={1} width="70px">
+                <Box borderRadius="full" bg="gray.100" px={3} py={1}>
                   <HStack spacing={1}>
                     <Text fontSize="sm">$</Text>
                     <Text fontSize="sm" fontWeight="bold">
@@ -92,7 +92,7 @@ const Index = () => {
                     </Text>
                   </HStack>
                 </Box>
-                <Box borderRadius="full" bg="gray.100" px={3} py={1} width="70px">
+                <Box borderRadius="full" bg="gray.100" px={3} py={1}>
                   <HStack spacing={1}>
                     <FaCalendar />
                     <Text fontSize="sm" fontWeight="bold">
@@ -100,11 +100,11 @@ const Index = () => {
                     </Text>
                   </HStack>
                 </Box>
-                <Box borderRadius="full" bg="gray.100" px={3} py={1} width="70px">
+                <Box borderRadius="full" bg="gray.100" px={3} py={1}>
                   <HStack spacing={1}>
                     <FaStar />
                     <Text fontSize="sm" fontWeight="bold">
-                      Fav
+                      Favorite
                     </Text>
                   </HStack>
                 </Box>
