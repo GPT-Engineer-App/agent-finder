@@ -53,7 +53,7 @@ const Index = () => {
       <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} />
       <VStack spacing={4} align="stretch">
         {filteredAgents.map((agent) => (
-          <Box key={agent.id} borderWidth={1} borderRadius="md" p={4}>
+          <Box key={agent.id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4}>
             <HStack spacing={4}>
               <Avatar size="lg" src={agent.photo} />
               <VStack align="start" spacing={1}>
