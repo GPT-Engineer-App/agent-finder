@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Text, Image, VStack, HStack, Avatar, Input, Button, Heading, Divider, Spacer } from "@chakra-ui/react";
-import { FaSearch, FaPhone, FaEnvelope } from "react-icons/fa";
+import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt } from "react-icons/fa";
 
 const agents = [
   {
@@ -85,7 +85,7 @@ const Index = () => {
             <Heading size="md" mb={2}>
               Recent Activity
             </Heading>
-            <RecentActivity activities={agent.recentActivity} />
+            <RecentActivity agent={agent} activities={agent.recentActivity} />
           </Box>
         ))}
       </VStack>
@@ -93,19 +93,20 @@ const Index = () => {
   );
 };
 
-const RecentActivity = ({ activities }) => {
+const RecentActivity = ({ agent, activities }) => {
   return (
     <VStack align="stretch" spacing={2}>
       {activities.map((activity, index) => (
-        <HStack key={index}>
-          <Text fontWeight="bold">{activity.type}:</Text>
-          <Spacer />
-          <VStack align="end">
+        <HStack key={index} spacing={4}>
+          <VStack align="start" spacing={0}>
+            <Text fontWeight="bold">{activity.type}:</Text>
             <Text>{activity.address}</Text>
             <Text fontSize="sm" color="gray.500">
               {activity.date}
             </Text>
           </VStack>
+          <Spacer />
+          <FaCommentAlt cursor="pointer" onClick={() => window.open(`sms:${agent.phone}`)} />
         </HStack>
       ))}
     </VStack>
