@@ -88,7 +88,7 @@ const Index = () => {
   return (
     <Box p={4}>
       <Heading size="xl" mb={4}>
-        Real Estate Agents
+        Activity
       </Heading>
       <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} />
       <SearchFilters
