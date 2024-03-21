@@ -1,7 +1,11 @@
+
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+
 import { Box, Text, Image, VStack, HStack, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
 import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
+
+const apiKey = import.meta.env.VITE_X_API_KEY;
 
 const agents_static = [
   {
@@ -61,29 +65,14 @@ const Index = () => {
   const [expandedSales, setExpandedSales] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
 
-  /*useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const response = await axios.get("https://us-east-2.aws.neurelo.com/custom/activity", {
-          headers: {
-            'x-api-key': 'neurelo_9wKFBp874Z5xFw6ZCfvhXYx+dz987RaLxRCh+x2IGg+tDrBMAkQZ8sLuPppIPZPT4nlxUa/HaNheENG+VW60jAT2mx4N3TRds9w4p3OWJ+fgPp0J+7YGLL3aZrNprQ5ZFpK78rg1Opfkew5VLU4YOPjEndhRJW9yeGK6ZrfGSXj5qmMMgmxJN9IMwubLXhxr_KjwvzYxK9Y7f0eXpRQv6E1HD1drowaZAXb6VDIhE7o8='
-          }
-        });
-        setAgents(response.data.data);
-      } catch (error) {
-        console.error("Error fetching agents:", error);
-      }
-    };
-
-    fetchAgents();
-  }, []);*/
 
   useEffect(() => {
     const fetchAgents = async () => {
       try {
+
         const response = await axios.get("https://us-east-2.aws.neurelo.com/custom/activity", {
           headers: {
-            'x-api-key': 'neurelo_9wKFBp874Z5xFw6ZCfvhXYx+dz987RaLxRCh+x2IGg+tDrBMAkQZ8sLuPppIPZPT4nlxUa/HaNheENG+VW60jAT2mx4N3TRds9w4p3OWJ+fgPp0J+7YGLL3aZrNprQ5ZFpK78rg1Opfkew5VLU4YOPjEndhRJW9yeGK6ZrfGSXj5qmMMgmxJN9IMwubLXhxr_KjwvzYxK9Y7f0eXpRQv6E1HD1drowaZAXb6VDIhE7o8='
+            'x-api-key': apiKey
           }
         });
         // Group listings by agent_phone
