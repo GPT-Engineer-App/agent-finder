@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { Box, Text, Image, VStack, HStack, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
 import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
 
-const agents = [
+const agents_static = [
   {
     id: 1,
     name: "John Doe",
@@ -55,9 +56,67 @@ const SearchFilters = ({ filters, onFilterChange }) => {
 };
 
 const Index = () => {
+  const [agents, setAgents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedSales, setExpandedSales] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
+
+  /*useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await axios.get("https://us-east-2.aws.neurelo.com/custom/activity", {
+          headers: {
+            'x-api-key': 'neurelo_9wKFBp874Z5xFw6ZCfvhXYx+dz987RaLxRCh+x2IGg+tDrBMAkQZ8sLuPppIPZPT4nlxUa/HaNheENG+VW60jAT2mx4N3TRds9w4p3OWJ+fgPp0J+7YGLL3aZrNprQ5ZFpK78rg1Opfkew5VLU4YOPjEndhRJW9yeGK6ZrfGSXj5qmMMgmxJN9IMwubLXhxr_KjwvzYxK9Y7f0eXpRQv6E1HD1drowaZAXb6VDIhE7o8='
+          }
+        });
+        setAgents(response.data.data);
+      } catch (error) {
+        console.error("Error fetching agents:", error);
+      }
+    };
+
+    fetchAgents();
+  }, []);*/
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await axios.get("https://us-east-2.aws.neurelo.com/custom/activity", {
+          headers: {
+            'x-api-key': 'neurelo_9wKFBp874Z5xFw6ZCfvhXYx+dz987RaLxRCh+x2IGg+tDrBMAkQZ8sLuPppIPZPT4nlxUa/HaNheENG+VW60jAT2mx4N3TRds9w4p3OWJ+fgPp0J+7YGLL3aZrNprQ5ZFpK78rg1Opfkew5VLU4YOPjEndhRJW9yeGK6ZrfGSXj5qmMMgmxJN9IMwubLXhxr_KjwvzYxK9Y7f0eXpRQv6E1HD1drowaZAXb6VDIhE7o8='
+          }
+        });
+        // Group listings by agent_phone
+        const agentsMap = response.data.data.reduce((acc, listing) => {
+          const agentPhone = listing.agent_phone;
+          if (!acc[agentPhone]) {
+            acc[agentPhone] = {
+              agent_name: listing.agent_name,
+              agent_phone: listing.agent_phone,
+              agent_email: listing.agent_email,
+              agent_photo: listing.agent_photo,
+              recentActivity: []
+            };
+          }
+          acc[agentPhone].recentActivity.push({
+            type: listing.listing_status,
+            address: listing.address,
+            date: listing.listing_date,
+            price: listing.price
+          });
+          return acc;
+        }, {});
+  
+        // Convert the map to an array
+        const agentsArray = Object.values(agentsMap);
+        setAgents(agentsArray);
+      } catch (error) {
+        console.error("Error fetching agents:", error);
+      }
+    };
+  
+    fetchAgents();
+  }, []);
 
   const handleFilterChange = (filterValue) => {
     setSelectedFilters((prevFilters) => {
@@ -80,7 +139,7 @@ const Index = () => {
   };
 
   const filteredAgents = agents.filter((agent) => {
-    const nameMatch = agent.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const nameMatch = agent.agent_name.toLowerCase().includes(searchTerm.toLowerCase());
     const filterMatch = selectedFilters.length === 0 || agent.recentActivity.some((activity) => selectedFilters.includes(activity.type));
     return nameMatch && filterMatch;
   });
@@ -100,61 +159,54 @@ const Index = () => {
         ]}
         onFilterChange={handleFilterChange}
       />
-      <VStack spacing={4} align="stretch">
-        {filteredAgents.map((agent) => (
-          <Box key={agent.id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4}>
-            <HStack spacing={4} align="start">
-              <HStack spacing={4}>
-                <Avatar size="lg" src={agent.photo} />
-                <VStack align="start" spacing={1}>
-                  <Text fontSize="xl" fontWeight="bold">
-                    {agent.name}
-                  </Text>
-                  <HStack>
-                    <FaPhone />
-                    <Text>{agent.phone}</Text>
-                  </HStack>
-                  <HStack>
-                    <FaEnvelope />
-                    <Text>{agent.email}</Text>
-                  </HStack>
-                </VStack>
-              </HStack>
-              <Spacer />
-              <VStack spacing={1}>
-                <Box borderRadius="full" bg="gray.100" px={3} py={1}>
-                  <HStack spacing={1}>
-                    <Text fontSize="sm">$</Text>
-                    <Text fontSize="sm" fontWeight="bold">
-                      {(agent.sales[0].amount / 1000000).toFixed(1)}m
-                    </Text>
-                  </HStack>
-                </Box>
-                <Box borderRadius="full" bg="gray.100" px={3} py={1}>
-                  <HStack spacing={1}>
-                    <FaCalendar />
-                    <Text fontSize="sm" fontWeight="bold">
-                      {agent.sales.length} yrs
-                    </Text>
-                  </HStack>
-                </Box>
-                <Box borderRadius="full" bg="gray.100" px={3} py={1}>
-                  <HStack spacing={1}>
-                    <FaStar />
-                    <Text fontSize="sm" fontWeight="bold">
-                      Fav
-                    </Text>
-                  </HStack>
-                </Box>
+    <VStack spacing={4} align="stretch">
+      {filteredAgents.map((agent) => (
+        <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4}>
+          <HStack spacing={4} align="start">
+            <HStack spacing={4}>
+              <Avatar size="lg" src={agent.agent_photo} />
+              <VStack align="start" spacing={1}>
+                <Text fontSize="xl" fontWeight="bold">
+                  {agent.agent_name}
+                </Text>
+                <HStack>
+                  <FaPhone />
+                  <Text>{agent.agent_phone}</Text>
+                </HStack>
+                <HStack>
+                  <FaEnvelope />
+                  <Text>{agent.agent_email}</Text>
+                </HStack>
               </VStack>
             </HStack>
-            <Heading size="md" my={4}>
-              Activity
-            </Heading>
-            <RecentActivity agent={agent} activities={agent.recentActivity} />
-          </Box>
-        ))}
-      </VStack>
+            <Spacer />
+            <VStack spacing={1}>
+              <Box borderRadius="full" bg="gray.100" px={3} py={1}>
+                <HStack spacing={1}>
+                  <Text fontSize="sm">$</Text>
+                  <Text fontSize="sm" fontWeight="bold">
+                    {(parseFloat(agent.price) / 1000000).toFixed(1)}m
+                  </Text>
+                </HStack>
+              </Box>
+              <Box borderRadius="full" bg="gray.100" px={3} py={1}>
+                <HStack spacing={1}>
+                  <FaCalendar />
+                  <Text fontSize="sm" fontWeight="bold">
+                    {new Date(agent.agent_active_date).getFullYear()} yrs
+                  </Text>
+                </HStack>
+              </Box>
+              {/* ... other JSX ... */}
+            </VStack>
+          </HStack>
+          <Heading size="md" my={4}>
+            Activity
+          </Heading>          
+          <RecentActivity agent={agent} activities={agent.recentActivity} />
+        </Box>
+      ))}
+    </VStack>
     </Box>
   );
 };
@@ -172,7 +224,7 @@ const RecentActivity = ({ agent, activities }) => {
             </Text>
           </VStack>
           <Spacer />
-          <FaCommentAlt cursor="pointer" onClick={() => window.open(`sms:${agent.phone}`)} />
+          <FaCommentAlt cursor="pointer" onClick={() => window.open(`sms:${agent.agent_phone}`)} />
         </HStack>
       ))}
     </VStack>
