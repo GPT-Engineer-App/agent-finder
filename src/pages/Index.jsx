@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 
@@ -7,43 +6,6 @@ import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from 
 
 const apiKey = import.meta.env.VITE_X_API_KEY;
 
-const agents_static = [
-  {
-    id: 1,
-    name: "John Doe",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwxfHxyZWFsJTIwZXN0YXRlJTIwYWdlbnQlMjBwb3J0cmFpdHxlbnwwfHx8fDE3MTA0NjE4Mjl8MA&ixlib=rb-4.0.3&q=80&w=1080",
-    phone: "(123) 456-7890",
-    email: "john@example.com",
-    sales: [
-      { year: 2022, amount: 5000000 },
-      { year: 2021, amount: 4500000 },
-      { year: 2020, amount: 4000000 },
-    ],
-    recentActivity: [
-      { type: "New Listing", address: "123 Main St", date: "2024-03-14" },
-      { type: "Open House", address: "456 Oak Ave", date: "2024-03-12" },
-      { type: "Closed Sale", address: "789 Elm Rd", date: "2024-03-10" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    photo: "https://images.unsplash.com/photo-1556157382-97eda2d62296?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfHNlYXJjaHwyfHxyZWFsJTIwZXN0YXRlJTIwYWdlbnQlMjBwb3J0cmFpdHxlbnwwfHx8fDE3MTA0NjE4Mjl8MA&ixlib=rb-4.0.3&q=80&w=1080",
-    phone: "(987) 654-3210",
-    email: "jane@example.com",
-    sales: [
-      { year: 2022, amount: 6000000 },
-      { year: 2021, amount: 5500000 },
-      { year: 2020, amount: 5000000 },
-    ],
-    recentActivity: [
-      { type: "Price Change", address: "321 Pine St", date: "2024-03-13" },
-      { type: "New Listing", address: "654 Birch Ln", date: "2024-03-11" },
-      { type: "Open House", address: "987 Cedar Rd", date: "2024-03-09" },
-    ],
-  },
-  // Add more agents here
-];
 
 const SearchFilters = ({ filters, onFilterChange }) => {
   return (
@@ -69,31 +31,33 @@ const Index = () => {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-
+        // Fetch activity
         const response = await axios.get("https://us-east-2.aws.neurelo.com/custom/activity", {
           headers: {
             'x-api-key': apiKey
           }
         });
         // Group listings by agent_phone
-        const agentsMap = response.data.data.reduce((acc, listing) => {
+        const agentsMap = response.data.data.reduce((activityEntry, listing) => {
           const agentPhone = listing.agent_phone;
-          if (!acc[agentPhone]) {
-            acc[agentPhone] = {
-              agent_name: listing.agent_name,
+          if (!activityEntry[agentPhone]) {
+            activityEntry[agentPhone] = {
+              agent_name: fullAgent.data.data.agent_name,
               agent_phone: listing.agent_phone,
               agent_email: listing.agent_email,
               agent_photo: listing.agent_photo,
+              agent_id: listing.agent_id,
               recentActivity: []
             };
           }
-          acc[agentPhone].recentActivity.push({
+          activityEntry[agentPhone].recentActivity.push({
             type: listing.listing_status,
             address: listing.address,
             date: listing.listing_date,
-            price: listing.price
+            price: listing.price,
+            listing_photo: listing.listing_photo // Add this line
           });
-          return acc;
+          return activityEntry;
         }, {});
   
         // Convert the map to an array
@@ -205,6 +169,13 @@ const RecentActivity = ({ agent, activities }) => {
     <VStack align="stretch" spacing={2}>
       {activities.map((activity, index) => (
         <HStack key={index} spacing={4}>
+          <Image
+            boxSize="150px"
+            objectFit="cover"
+            src={activity.listing_photo}
+            alt="Listing photo"
+            borderRadius="4px"
+          />
           <VStack align="start" spacing={0}>
             <Text fontWeight="bold">{activity.type}:</Text>
             <Text>{activity.address}</Text>
