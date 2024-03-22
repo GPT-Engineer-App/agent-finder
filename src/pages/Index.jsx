@@ -37,17 +37,19 @@ const Index = () => {
             'x-api-key': apiKey
           }
         });
-        // Group listings by agent_phone
+        // Group listings by agent_phone and sum up sales
         const agentsMap = response.data.data.reduce((activityEntry, listing) => {
           const agentPhone = listing.agent_phone;
           if (!activityEntry[agentPhone]) {
             activityEntry[agentPhone] = {
-              agent_name: fullAgent.data.data.agent_name,
+              agent_name: listing.agent_name,
               agent_phone: listing.agent_phone,
               agent_email: listing.agent_email,
               agent_photo: listing.agent_photo,
               agent_id: listing.agent_id,
-              recentActivity: []
+              agent_active_date: listing.agent_active_date,
+              recentActivity: [],
+              agent_sales: 0 // Initialize agent_sales
             };
           }
           activityEntry[agentPhone].recentActivity.push({
@@ -55,8 +57,10 @@ const Index = () => {
             address: listing.address,
             date: listing.listing_date,
             price: listing.price,
-            listing_photo: listing.listing_photo // Add this line
+            listing_photo: listing.listing_photo
           });
+          // Sum up the price for agent_sales
+          activityEntry[agentPhone].agent_sales += parseFloat(listing.price);
           return activityEntry;
         }, {});
   
@@ -67,7 +71,6 @@ const Index = () => {
         console.error("Error fetching agents:", error);
       }
     };
-  
     fetchAgents();
   }, []);
 
@@ -138,18 +141,20 @@ const Index = () => {
                 <HStack spacing={1}>
                   <Text fontSize="sm">$</Text>
                   <Text fontSize="sm" fontWeight="bold">
-                    {(parseFloat(agent.price) / 1000000).toFixed(1)}m
+                    {(parseFloat(agent.agent_sales) / 1000000).toFixed(1)}m
                   </Text>
                 </HStack>
               </Box>
-              <Box borderRadius="full" bg="gray.100" px={3} py={1}>
-                <HStack spacing={1}>
-                  <FaCalendar />
-                  <Text fontSize="sm" fontWeight="bold">
-                    {new Date(agent.agent_active_date).getFullYear()} yrs
-                  </Text>
-                </HStack>
-              </Box>
+              {agent.agent_active_date && parseInt(agent.agent_active_date) > 1 && (
+                <Box borderRadius="full" bg="gray.100" px={3} py={1}>
+                  <HStack spacing={1}>
+                    <FaCalendar />
+                    <Text fontSize="sm" fontWeight="bold">
+                      {parseInt(agent.agent_active_date)}
+                    </Text>
+                  </HStack>
+                </Box>
+              )}
               {/* ... other JSX ... */}
             </VStack>
           </HStack>
@@ -172,19 +177,20 @@ const RecentActivity = ({ agent, activities }) => {
           <Image
             boxSize="150px"
             objectFit="cover"
-            src={activity.listing_photo}
+            src={activity.listing_photo || "https://ziptie.app/nop.png"}
             alt="Listing photo"
             borderRadius="4px"
           />
           <VStack align="start" spacing={0}>
-            <Text fontWeight="bold">{activity.type}:</Text>
+            {/*Text fontWeight="bold">{activity.type}:</Text*/}
+            <Text fontWeight="bold">New Listing: ${activity.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
             <Text>{activity.address}</Text>
             <Text fontSize="sm" color="gray.500">
               {activity.date}
             </Text>
           </VStack>
           <Spacer />
-          <FaCommentAlt cursor="pointer" onClick={() => window.open(`sms:${agent.agent_phone}`)} />
+          <FaCommentAlt cursor="pointer" onClick={() => window.open(`sms:${agent.agent_phone}?body=hello%20world`)} />
         </HStack>
       ))}
     </VStack>
