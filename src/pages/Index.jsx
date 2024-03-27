@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useColors } from "./colors";
 import axios from 'axios';
 import { withAuthInfo, useRedirectFunctions, useLogoutFunction } from '@propelauth/react'
 
@@ -106,8 +107,11 @@ const Index = withAuthInfo((props) => {
   const logoutFunction = useLogoutFunction()
   const { redirectToLoginPage, redirectToSignupPage, redirectToAccountPage } = useRedirectFunctions()
 
+  const { bgColor, textColor, cardBgColor, cardTextColor, buttonBgColor, buttonTextColor } = useColors();
+
+
   return (
-    <Box p={4}>
+    <Box p={4} bg={bgColor} color={textColor}>
       <HStack spacing={4} justify="flex-end">
         <Menu>
           <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -119,10 +123,10 @@ const Index = withAuthInfo((props) => {
           </MenuList>
         </Menu>
       </HStack>
-      <Heading size="xl" mb={4}>
+      <Heading size="xl" mb={4} color={textColor}>
         Activity
       </Heading>
-      <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} />
+      <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} color={textColor} bg={cardBgColor} />
       <SearchFilters
         filters={[
           { label: "New Listings", value: "New Listing" },
@@ -134,21 +138,21 @@ const Index = withAuthInfo((props) => {
       />
       <VStack spacing={4} align="stretch">
         {filteredAgents.map((agent) => (
-          <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4}>
+          <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4} bg={cardBgColor} color={cardTextColor}>
             <HStack spacing={4} align="start">
               <HStack spacing={4}>
                 <Avatar size="lg" src={agent.agent_photo} />
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="xl" fontWeight="bold">
+                  <Text fontSize="xl" fontWeight="bold" color={textColor}>
                     {agent.agent_name}
                   </Text>
                   <HStack>
                     <FaPhone />
-                    <Text>{agent.agent_phone}</Text>
+                    <Text color={textColor}>{agent.agent_phone}</Text>
                   </HStack>
                   <HStack>
                     <FaEnvelope />
-                    <Text>{agent.agent_email}</Text>
+                    <Text color={textColor}>{agent.agent_email}</Text>
                   </HStack>
                 </VStack>
               </HStack>
@@ -156,8 +160,8 @@ const Index = withAuthInfo((props) => {
               <VStack spacing={1}>
                 <Box borderRadius="full" bg="gray.100" px={3} py={1}>
                   <HStack spacing={1}>
-                    <Text fontSize="sm">$</Text>
-                    <Text fontSize="sm" fontWeight="bold">
+                    <Text fontSize="sm" color={textColor}>$</Text>
+                    <Text fontSize="sm" fontWeight="bold" color={textColor}>
                       {(parseFloat(agent.agent_sales) / 1000000).toFixed(1)}m
                     </Text>
                   </HStack>
@@ -175,7 +179,7 @@ const Index = withAuthInfo((props) => {
                 {/* ... other JSX ... */}
               </VStack>
             </HStack>
-            <Heading size="md" my={4}>
+            <Heading size="md" my={4} color={textColor}>
               Activity
             </Heading>
             <RecentActivity agent={agent} activities={agent.recentActivity} />
@@ -188,6 +192,8 @@ const Index = withAuthInfo((props) => {
 
 
 const RecentActivity = ({ agent, activities }) => {
+  const { textColor, iconColor } = useColors();
+
   return (
     <VStack align="stretch" spacing={2}>
       {activities.map((activity, index) => (
@@ -201,14 +207,14 @@ const RecentActivity = ({ agent, activities }) => {
           />
           <VStack align="start" spacing={0}>
             {/*Text fontWeight="bold">{activity.type}:</Text*/}
-            <Text fontWeight="bold">New Listing: ${activity.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
-            <Text>{activity.address}</Text>
-            <Text fontSize="sm" color="gray.500">
+            <Text fontWeight="bold" color={textColor}>New Listing: ${activity.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
+            <Text color={textColor}>{activity.address}</Text>
+            <Text fontSize="sm" color={textColor}>
               {activity.date}
             </Text>
           </VStack>
           <Spacer />
-          <FaCommentAlt cursor="pointer" onClick={() => window.open(`sms:${agent.agent_phone}?body=hello%20world`)} />
+          <FaCommentAlt color={iconColor} cursor="pointer" onClick={() => window.open(`sms:${agent.agent_phone}?body=hello%20world`)} />
         </HStack>
       ))}
     </VStack>
