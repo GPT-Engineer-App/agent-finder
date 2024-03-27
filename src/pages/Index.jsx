@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import { withAuthInfo, useRedirectFunctions, useLogoutFunction } from '@propelauth/react'
 
-import { Box, Text, Image, VStack, HStack, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, Text, Image, VStack, HStack, Menu, MenuButton, MenuItem, MenuList, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
 import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
-
+import { ChevronDownIcon } from '@chakra-ui/icons';
 const apiKey = import.meta.env.VITE_X_API_KEY;
 
 
@@ -21,7 +22,9 @@ const SearchFilters = ({ filters, onFilterChange }) => {
   );
 };
 
-const Index = () => {
+// const Index = ({ user }) => {
+const Index = withAuthInfo((props) => {
+
   const [agents, setAgents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedSales, setExpandedSales] = useState([]);
@@ -63,7 +66,7 @@ const Index = () => {
           activityEntry[agentPhone].agent_sales += parseFloat(listing.price);
           return activityEntry;
         }, {});
-  
+
         // Convert the map to an array
         const agentsArray = Object.values(agentsMap);
         setAgents(agentsArray);
@@ -100,8 +103,22 @@ const Index = () => {
     return nameMatch && filterMatch;
   });
 
+  const logoutFunction = useLogoutFunction()
+  const { redirectToLoginPage, redirectToSignupPage, redirectToAccountPage } = useRedirectFunctions()
+
   return (
     <Box p={4}>
+      <HStack spacing={4} justify="flex-end">
+        <Menu>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+            <Avatar src={props.isLoggedIn ? props.user.pictureUrl : undefined} name={props.isLoggedIn ? undefined : "Guest"} />
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => redirectToAccountPage()}>Account</MenuItem>
+            <MenuItem onClick={() => logoutFunction(true)}>Logout</MenuItem>
+          </MenuList>
+        </Menu>
+      </HStack>
       <Heading size="xl" mb={4}>
         Activity
       </Heading>
@@ -115,59 +132,60 @@ const Index = () => {
         ]}
         onFilterChange={handleFilterChange}
       />
-    <VStack spacing={4} align="stretch">
-      {filteredAgents.map((agent) => (
-        <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4}>
-          <HStack spacing={4} align="start">
-            <HStack spacing={4}>
-              <Avatar size="lg" src={agent.agent_photo} />
-              <VStack align="start" spacing={1}>
-                <Text fontSize="xl" fontWeight="bold">
-                  {agent.agent_name}
-                </Text>
-                <HStack>
-                  <FaPhone />
-                  <Text>{agent.agent_phone}</Text>
-                </HStack>
-                <HStack>
-                  <FaEnvelope />
-                  <Text>{agent.agent_email}</Text>
-                </HStack>
-              </VStack>
-            </HStack>
-            <Spacer />
-            <VStack spacing={1}>
-              <Box borderRadius="full" bg="gray.100" px={3} py={1}>
-                <HStack spacing={1}>
-                  <Text fontSize="sm">$</Text>
-                  <Text fontSize="sm" fontWeight="bold">
-                    {(parseFloat(agent.agent_sales) / 1000000).toFixed(1)}m
+      <VStack spacing={4} align="stretch">
+        {filteredAgents.map((agent) => (
+          <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4}>
+            <HStack spacing={4} align="start">
+              <HStack spacing={4}>
+                <Avatar size="lg" src={agent.agent_photo} />
+                <VStack align="start" spacing={1}>
+                  <Text fontSize="xl" fontWeight="bold">
+                    {agent.agent_name}
                   </Text>
-                </HStack>
-              </Box>
-              {agent.agent_active_date && parseInt(agent.agent_active_date) > 1 && (
+                  <HStack>
+                    <FaPhone />
+                    <Text>{agent.agent_phone}</Text>
+                  </HStack>
+                  <HStack>
+                    <FaEnvelope />
+                    <Text>{agent.agent_email}</Text>
+                  </HStack>
+                </VStack>
+              </HStack>
+              <Spacer />
+              <VStack spacing={1}>
                 <Box borderRadius="full" bg="gray.100" px={3} py={1}>
                   <HStack spacing={1}>
-                    <FaCalendar />
+                    <Text fontSize="sm">$</Text>
                     <Text fontSize="sm" fontWeight="bold">
-                      {parseInt(agent.agent_active_date)}
+                      {(parseFloat(agent.agent_sales) / 1000000).toFixed(1)}m
                     </Text>
                   </HStack>
                 </Box>
-              )}
-              {/* ... other JSX ... */}
-            </VStack>
-          </HStack>
-          <Heading size="md" my={4}>
-            Activity
-          </Heading>          
-          <RecentActivity agent={agent} activities={agent.recentActivity} />
-        </Box>
-      ))}
-    </VStack>
+                {agent.agent_active_date && parseInt(agent.agent_active_date) > 1 && (
+                  <Box borderRadius="full" bg="gray.100" px={3} py={1}>
+                    <HStack spacing={1}>
+                      <FaCalendar />
+                      <Text fontSize="sm" fontWeight="bold">
+                        {parseInt(agent.agent_active_date)}
+                      </Text>
+                    </HStack>
+                  </Box>
+                )}
+                {/* ... other JSX ... */}
+              </VStack>
+            </HStack>
+            <Heading size="md" my={4}>
+              Activity
+            </Heading>
+            <RecentActivity agent={agent} activities={agent.recentActivity} />
+          </Box>
+        ))}
+      </VStack>
     </Box>
   );
-};
+});
+
 
 const RecentActivity = ({ agent, activities }) => {
   return (

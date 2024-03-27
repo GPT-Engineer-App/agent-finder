@@ -1,3 +1,4 @@
+import { AuthProvider } from "@propelauth/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
@@ -10,13 +11,21 @@ const colors = {
     700: "#2a69ac",
   },
 };
-
-const theme = extendTheme({ colors });
+// 2. Add your color mode config
+const config = {
+  initialColorMode: 'dark',
+  useSystemColorMode: false,
+}
+const theme = extendTheme({ colors, config });
+export default theme
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <ChakraProvider theme={theme}>
-      <App />
-    </ChakraProvider>
-  </React.StrictMode>
+    <AuthProvider authUrl={"https://700811920.propelauthtest.com"}>
+      <React.StrictMode>
+        <ChakraProvider theme={theme}>
+          <App />
+        </ChakraProvider>
+      </React.StrictMode>
+    </AuthProvider>
 );
+
