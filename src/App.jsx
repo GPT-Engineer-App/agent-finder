@@ -1,14 +1,13 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Index from "./pages/Index.jsx";
-import YourApp from "./pages/YourApp.jsx";
+import Layout from "./pages/Layout"; // Import the Layout component
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route exact path="/" element={<Index />} />
-        <Route exact path="/yourapp" element={<YourApp />} />
-      </Routes>
+        <Routes>
+          <Route exact path="/" element={<Index />} />
+        </Routes>
     </Router>
   );
 }
