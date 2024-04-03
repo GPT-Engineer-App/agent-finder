@@ -6,6 +6,7 @@ import { withAuthInfo, useRedirectFunctions, useLogoutFunction } from '@propelau
 import { Box, Text, Image, VStack, HStack, Menu, MenuButton, MenuItem, MenuList, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
 import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
 import { ChevronDownIcon } from '@chakra-ui/icons';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
 const apiKey = import.meta.env.VITE_X_API_KEY;
 
 
@@ -109,6 +110,27 @@ const Activity = withAuthInfo((props) => {
 
   const { bgColor, textColor, cardBgColor, cardTextColor, buttonBgColor, buttonTextColor } = useColors();
 
+  // Existing state declarations
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+
+  const { isOpen: isAgentModalOpen, onOpen: onAgentModalOpen, onClose: onAgentModalClose } = useDisclosure();
+  const { isOpen: isPropertyModalOpen, onOpen: onPropertyModalOpen, onClose: onPropertyModalClose } = useDisclosure();
+
+
+  const handleAgentClick = (agent, event) => {
+    event.stopPropagation(); // Prevent the event from bubbling up
+    setSelectedAgent(agent);
+    onAgentModalOpen(); // Assuming this opens the agent details modal
+  };
+  // Handler for when a property is clicked
+  const handlePropertyClick = (property, event) => {
+    event.stopPropagation(); // Prevent the event from bubbling up
+    setSelectedProperty(property);
+    onPropertyModalOpen(); // Assuming this opens the property details modal
+  };
+  
+
 
   return (
     <Box p={4} bg={bgColor} color={textColor}>
@@ -130,9 +152,9 @@ const Activity = withAuthInfo((props) => {
           <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4} bg={cardBgColor} color={cardTextColor}>
             <HStack spacing={4} align="start">
               <HStack spacing={4}>
-                <Avatar size="lg" src={agent.agent_photo} />
+                <Avatar size="lg" src={agent.agent_photo} cursor="pointer" onClick={(e) => handleAgentClick(agent, e)} />
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="xl" fontWeight="bold" color={textColor}>
+                  <Text fontSize="xl" fontWeight="bold" color={textColor} cursor="pointer" onClick={(e) => handleAgentClick(agent, e)}>
                     {agent.agent_name}
                   </Text>
                   <HStack>
@@ -171,22 +193,61 @@ const Activity = withAuthInfo((props) => {
             <Heading size="md" my={4} color={textColor}>
               Activity
             </Heading>
-            <RecentActivity agent={agent} activities={agent.recentActivity} />
+            <RecentActivity agent={agent} activities={agent.recentActivity}  onPropertyClick={handlePropertyClick} />
           </Box>
         ))}
       </VStack>
+      {/* Modal for displaying selected agent details */}
+      <Modal isOpen={isAgentModalOpen} onClose={onAgentModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{selectedAgent?.agent_name}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {/* Display more details about the agent here */}
+            <Text>Email: {selectedAgent?.agent_email}</Text>
+            <Text>Phone: {selectedAgent?.agent_phone}</Text>
+            {/* Add more details as needed */}
+          </ModalBody>
+          <ModalFooter>
+            {/* Optional actions, like a close button */}
+            <Button colorScheme="blue" mr={3} onClick={onAgentModalClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isPropertyModalOpen} onClose={onPropertyModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Property Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {/* Display more details about the property here */}
+            <Text>Address: {selectedProperty?.address}</Text>
+            <Text>Price: ${selectedProperty?.price}</Text>
+            <Text>Date: {selectedProperty?.date}</Text>
+            {/* Add more details as needed */}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onPropertyModalClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>      
     </Box>
   );
 });
 
 
-const RecentActivity = ({ agent, activities }) => {
+const RecentActivity = ({ agent, activities, onPropertyClick }) => {
   const { textColor, iconColor } = useColors();
 
   return (
     <VStack align="stretch" spacing={2}>
       {activities.map((activity, index) => (
-        <HStack key={index} spacing={4}>
+        <HStack key={index} spacing={4} onClick={(e) => onPropertyClick(activity, e)}>
           <Image
             boxSize="150px"
             objectFit="cover"

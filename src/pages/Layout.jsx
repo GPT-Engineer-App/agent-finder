@@ -11,7 +11,6 @@ const menuItems = [
   { label: "Activity", icon: FaHome, link: "/activity" },
   { label: "Settings", icon: FaHome, link: "/settings" },
   { label: "Analytics", icon: FaHome, link: "/analytics" },
-  { label: "Settings", icon: FaHome },
   { label: "Help", icon: FaHome },
 ];
 
@@ -41,7 +40,7 @@ const Layout = withAuthInfo(({ children, ...props }) => {
       ) : (
         <Box w="250px" bg={colorMode === "dark" ? "gray.700" : "gray.50"} p={4}>
           <Heading size="md" mb={8} color={colorMode === "dark" ? "white" : "black"}>
-            My App
+            Xigent
           </Heading>
           <VStack align="stretch" spacing={1}>
             {menuItems.map((item, index) => (
