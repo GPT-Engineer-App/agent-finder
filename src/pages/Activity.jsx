@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useColors } from "./colors";
 import axios from 'axios';
 import { withAuthInfo, useRedirectFunctions, useLogoutFunction } from '@propelauth/react'
-
+import { useColorMode } from '@chakra-ui/react';
 import { Box, Text, Image, VStack, HStack, Menu, MenuButton, MenuItem, MenuList, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
 import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
 import { ChevronDownIcon } from '@chakra-ui/icons';
@@ -31,6 +31,8 @@ const Activity = withAuthInfo((props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedSales, setExpandedSales] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const { colorMode, toggleColorMode } = useColorMode();  
+
 
 
   useEffect(() => {
@@ -133,11 +135,11 @@ const Activity = withAuthInfo((props) => {
 
 
   return (
-    <Box p={4} bg={bgColor} color={textColor}>
-      <Heading size="xl" mb={4} color={textColor}>
+    <Box p={4} bg={colorMode === "dark" ? "blue.800" : "blue.50"}>
+      <Heading size="xl" mb={4} color={colorMode === "dark" ? "white" : "black"}>
         Activity
       </Heading>
-      <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} color={textColor} bg={cardBgColor} />
+      <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} color={colorMode === "dark" ? "white" : "black"}/>
       <SearchFilters
         filters={[
           { label: "New Listings", value: "New Listing" },
@@ -149,21 +151,22 @@ const Activity = withAuthInfo((props) => {
       />
       <VStack spacing={4} align="stretch">
         {filteredAgents.map((agent) => (
-          <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4} bg={cardBgColor} color={cardTextColor}>
+          // <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4} bg={cardBgColor} color={cardTextColor}>
+          <Box key={agent.listing_id} borderWidth={1} borderRadius="lg" boxShadow="md" p={4} bg={colorMode === "dark" ? "blue.700" : "blue.100"}>
             <HStack spacing={4} align="start">
               <HStack spacing={4}>
                 <Avatar size="lg" src={agent.agent_photo} cursor="pointer" onClick={(e) => handleAgentClick(agent, e)} />
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="xl" fontWeight="bold" color={textColor} cursor="pointer" onClick={(e) => handleAgentClick(agent, e)}>
+                  <Text fontSize="xl" fontWeight="bold" color={colorMode === "dark" ? "white" : "black"} cursor="pointer" onClick={(e) => handleAgentClick(agent, e)}>
                     {agent.agent_name}
                   </Text>
                   <HStack>
                     <FaPhone />
-                    <Text color={textColor}>{agent.agent_phone}</Text>
+                    <Text color={colorMode === "dark" ? "white" : "black"}>{agent.agent_phone}</Text>
                   </HStack>
                   <HStack>
                     <FaEnvelope />
-                    <Text color={textColor}>{agent.agent_email}</Text>
+                    <Text color={colorMode === "dark" ? "white" : "black"}>{agent.agent_email}</Text>
                   </HStack>
                 </VStack>
               </HStack>
@@ -171,8 +174,8 @@ const Activity = withAuthInfo((props) => {
               <VStack spacing={1}>
                 <Box borderRadius="full" bg="gray.100" px={3} py={1}>
                   <HStack spacing={1}>
-                    <Text fontSize="sm" color={textColor}>$</Text>
-                    <Text fontSize="sm" fontWeight="bold" color={textColor}>
+                    <Text fontSize="sm" color={colorMode === "dark" ? "white" : "black"}>$</Text>
+                    <Text fontSize="sm" fontWeight="bold" color={colorMode === "dark" ? "white" : "black"}>
                       {(parseFloat(agent.agent_sales) / 1000000).toFixed(1)}m
                     </Text>
                   </HStack>
@@ -190,7 +193,7 @@ const Activity = withAuthInfo((props) => {
                 {/* ... other JSX ... */}
               </VStack>
             </HStack>
-            <Heading size="md" my={4} color={textColor}>
+            <Heading size="md" my={4} color={colorMode === "dark" ? "white" : "black"}>
               Activity
             </Heading>
             <RecentActivity agent={agent} activities={agent.recentActivity}  onPropertyClick={handlePropertyClick} />
@@ -243,6 +246,7 @@ const Activity = withAuthInfo((props) => {
 
 const RecentActivity = ({ agent, activities, onPropertyClick }) => {
   const { textColor, iconColor } = useColors();
+  const { colorMode, toggleColorMode } = useColorMode();  
 
   return (
     <VStack align="stretch" spacing={2}>
@@ -257,9 +261,9 @@ const RecentActivity = ({ agent, activities, onPropertyClick }) => {
           />
           <VStack align="start" spacing={0}>
             {/*Text fontWeight="bold">{activity.type}:</Text*/}
-            <Text fontWeight="bold" color={textColor}>New Listing: ${activity.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
-            <Text color={textColor}>{activity.address}</Text>
-            <Text fontSize="sm" color={textColor}>
+            <Text fontWeight="bold" color={colorMode === "dark" ? "white" : "black"}>New Listing: ${activity.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
+            <Text color={colorMode === "dark" ? "white" : "black"}>{activity.address}</Text>
+            <Text fontSize="sm" color={colorMode === "dark" ? "white" : "black"}>
               {activity.date}
             </Text>
           </VStack>
