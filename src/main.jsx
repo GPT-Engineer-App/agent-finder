@@ -1,4 +1,4 @@
-import { AuthProvider } from "@propelauth/react";
+import { RequiredAuthProvider } from "@propelauth/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -14,7 +14,7 @@ import theme from "./pages/theme";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <AuthProvider authUrl={"https://700811920.propelauthtest.com"}>
+  <RequiredAuthProvider authUrl={"https://700811920.propelauthtest.com"}>
     <BrowserRouter>
       <ChakraProvider theme={theme}>
         <Layout>
@@ -27,16 +27,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </Layout>
       </ChakraProvider>
     </BrowserRouter>
-  </AuthProvider>
+  </RequiredAuthProvider>
 );
-
-/*ReactDOM.createRoot(document.getElementById("root")).render(
-    <AuthProvider authUrl={"https://700811920.propelauthtest.com"}>
-      <React.StrictMode>
-        <ChakraProvider theme={theme}>
-          <App />
-        </ChakraProvider>
-      </React.StrictMode>
-    </AuthProvider>
-);*/
 

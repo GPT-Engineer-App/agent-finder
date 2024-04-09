@@ -39,13 +39,14 @@ const Activity = withAuthInfo((props) => {
     const fetchAgents = async () => {
       try {
         // Fetch activity
-        const response = await axios.get("https://us-east-2.aws.neurelo.com/custom/activity", {
+        const response = await axios.get("https://ziptie.app/api/custom/activity", {
           headers: {
-            'x-api-key': apiKey
-          }
+            Authorization: `Bearer ${props.accessToken}`,
+          },
         });
         // Group listings by agent_phone and sum up sales
-        const agentsMap = response.data.data.reduce((activityEntry, listing) => {
+        const arr = JSON.parse(response.data[0])['data']
+        const agentsMap = arr.reduce((activityEntry, listing) => {
           const agentPhone = listing.agent_phone;
           if (!activityEntry[agentPhone]) {
             activityEntry[agentPhone] = {
