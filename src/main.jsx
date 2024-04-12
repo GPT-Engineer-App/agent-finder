@@ -1,4 +1,4 @@
-import { RequiredAuthProvider } from "@propelauth/react";
+import { RequiredAuthProvider, RedirectToLogin } from "@propelauth/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -12,9 +12,13 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import theme from "./pages/theme";
 
-
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <RequiredAuthProvider authUrl={"https://700811920.propelauthtest.com"}>
+  <RequiredAuthProvider   authUrl={import.meta.env.VITE_AUTH_URL || ""}
+    displayIfLoggedOut={
+      <RedirectToLogin
+        postLoginRedirectUrl={window.location.href}
+      />}
+  >
     <BrowserRouter>
       <ChakraProvider theme={theme}>
         <Layout>
