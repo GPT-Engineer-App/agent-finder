@@ -2,7 +2,6 @@ import { RequiredAuthProvider, RedirectToLogin } from "@propelauth/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import App from "./App.jsx";
 import Layout from "./pages/Layout";
 import Index from "./pages/Index";
 import Activity from "./pages/Activity";
@@ -11,9 +10,10 @@ import Analytics from "./pages/Analytics";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import theme from "./pages/theme";
+const authUrl = import.meta.env.VITE_AUTH_URL;
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <RequiredAuthProvider   authUrl={import.meta.env.VITE_AUTH_URL || ""}
+  <RequiredAuthProvider   authUrl={authUrl}
     displayIfLoggedOut={
       <RedirectToLogin
         postLoginRedirectUrl={window.location.href}
