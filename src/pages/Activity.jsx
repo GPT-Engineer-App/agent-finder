@@ -5,6 +5,7 @@ import { useColorMode, Box, ButtonGroup, Card, CardBody, CardFooter, Stack, Text
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
 import { useColors } from "./colors";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const SearchFilters = ({ filters, onFilterChange }) => {
   return (
@@ -33,8 +34,7 @@ const Activity = withAuthInfo((props) => {
     const fetchAgents = async () => {
       try {
         // Fetch activity
-        // const response = await axios.get("https://ziptie.app/api/custom/activity", {
-        const response = await axios.get("http://localhost:8000/custom/activity", {
+        const response = await axios.get(apiUrl + "/custom/activity", {
           headers: {
             Authorization: `Bearer ${props.accessToken}`,
           },
