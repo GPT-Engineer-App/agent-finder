@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useColors } from "./colors";
 import axios from 'axios';
-import { withAuthInfo, useRedirectFunctions, useLogoutFunction } from '@propelauth/react'
-import { useColorMode } from '@chakra-ui/react';
-import { Box, Text, Image, VStack, HStack, Menu, MenuButton, MenuItem, MenuList, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem } from "@chakra-ui/react";
-import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
+import { withAuthInfo, useRedirectFunctions, useLogoutFunction } from '@propelauth/react';
+import { useColorMode, Box, ButtonGroup, Card, CardBody, CardFooter, Stack, Text, Image, VStack, HStack, Link, Menu, MenuButton, MenuItem, MenuList, Avatar, Input, Button, Heading, Divider, Spacer, Wrap, WrapItem, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, SimpleGrid } from "@chakra-ui/react";
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
-const apiKey = import.meta.env.VITE_X_API_KEY;
-
+import { FaSearch, FaPhone, FaEnvelope, FaCommentAlt, FaCalendar, FaStar } from "react-icons/fa";
+import { useColors } from "./colors";
 
 const SearchFilters = ({ filters, onFilterChange }) => {
   return (
@@ -31,15 +27,14 @@ const Activity = withAuthInfo((props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedSales, setExpandedSales] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
-  const { colorMode, toggleColorMode } = useColorMode();  
-
-
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
     const fetchAgents = async () => {
       try {
         // Fetch activity
-        const response = await axios.get("https://ziptie.app/api/custom/activity", {
+        // const response = await axios.get("https://ziptie.app/api/custom/activity", {
+        const response = await axios.get("http://localhost:8000/custom/activity", {
           headers: {
             Authorization: `Bearer ${props.accessToken}`,
           },
@@ -132,7 +127,7 @@ const Activity = withAuthInfo((props) => {
     setSelectedProperty(property);
     onPropertyModalOpen(); // Assuming this opens the property details modal
   };
-  
+
 
 
   return (
@@ -140,7 +135,7 @@ const Activity = withAuthInfo((props) => {
       <Heading size="xl" mb={4} color={colorMode === "dark" ? "white" : "black"}>
         Activity
       </Heading>
-      <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} color={colorMode === "dark" ? "white" : "black"}/>
+      <Input placeholder="Search agents..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} mb={4} color={colorMode === "dark" ? "white" : "black"} />
       <SearchFilters
         filters={[
           { label: "New Listings", value: "New Listing" },
@@ -158,16 +153,14 @@ const Activity = withAuthInfo((props) => {
               <HStack spacing={4}>
                 <Avatar size="lg" src={agent.agent_photo} cursor="pointer" onClick={(e) => handleAgentClick(agent, e)} />
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="xl" fontWeight="bold" color={colorMode === "dark" ? "white" : "black"} cursor="pointer" onClick={(e) => handleAgentClick(agent, e)}>
+                  <Text fontSize="l" fontWeight="bold" color={colorMode === "dark" ? "white" : "black"} cursor="pointer" onClick={(e) => handleAgentClick(agent, e)}>
                     {agent.agent_name}
                   </Text>
                   <HStack>
-                    <FaPhone />
-                    <Text color={colorMode === "dark" ? "white" : "black"}>{agent.agent_phone}</Text>
+                    <Link href={`tel:${agent.agent_phone}`}><FaPhone /></Link>
                   </HStack>
                   <HStack>
-                    <FaEnvelope />
-                    <Text color={colorMode === "dark" ? "white" : "black"}>{agent.agent_email}</Text>
+                    <Link href={`mailto:${agent.agent_email}`}><FaEnvelope /></Link>
                   </HStack>
                 </VStack>
               </HStack>
@@ -191,13 +184,10 @@ const Activity = withAuthInfo((props) => {
                     </HStack>
                   </Box>
                 )}
-                {/* ... other JSX ... */}
+
               </VStack>
             </HStack>
-            <Heading size="md" my={4} color={colorMode === "dark" ? "white" : "black"}>
-              Activity
-            </Heading>
-            <RecentActivity agent={agent} activities={agent.recentActivity}  onPropertyClick={handlePropertyClick} />
+            <RecentActivity agent={agent} activities={agent.recentActivity} onPropertyClick={handlePropertyClick} />
           </Box>
         ))}
       </VStack>
@@ -239,7 +229,7 @@ const Activity = withAuthInfo((props) => {
             </Button>
           </ModalFooter>
         </ModalContent>
-      </Modal>      
+      </Modal>
     </Box>
   );
 });
@@ -247,32 +237,69 @@ const Activity = withAuthInfo((props) => {
 
 const RecentActivity = ({ agent, activities, onPropertyClick }) => {
   const { textColor, iconColor } = useColors();
-  const { colorMode, toggleColorMode } = useColorMode();  
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <VStack align="stretch" spacing={2}>
+    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
       {activities.map((activity, index) => (
-        <HStack key={index} spacing={4} onClick={(e) => onPropertyClick(activity, e)}>
-          <Image
-            boxSize="150px"
-            objectFit="cover"
-            src={activity.listing_photo || "https://ziptie.app/nop.png"}
-            alt="Listing photo"
-            borderRadius="4px"
-          />
-          <VStack align="start" spacing={0}>
-            {/*Text fontWeight="bold">{activity.type}:</Text*/}
-            <Text fontWeight="bold" color={colorMode === "dark" ? "white" : "black"}>New Listing: ${activity.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
-            <Text color={colorMode === "dark" ? "white" : "black"}>{activity.address}</Text>
-            <Text fontSize="sm" color={colorMode === "dark" ? "white" : "black"}>
-              {activity.date}
-            </Text>
-          </VStack>
-          <Spacer />
-          <FaCommentAlt color={iconColor} cursor="pointer" onClick={() => window.open(`sms:${agent.agent_phone}?body=hello%20world`)} />
-        </HStack>
+        /*      <VStack key={index} spacing={4} onClick={(e) => onPropertyClick(activity, e)}>
+                  <Image
+                    minWidth={["100px", "150px"]}
+                    width={["100px", "150px"]}
+                    maxWidth={["100%", "150px"]}
+                    objectFit="cover"
+                    src={activity.listing_photo || "https://ziptie.app/nop.png"}
+                    alt="Listing photo"
+                    borderRadius="4px"
+                  />
+                  <VStack align="start" spacing={0}>
+                    <Text fontWeight="bold" color={colorMode === "dark" ? "white" : "black"}>New Listing: ${activity.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
+                    <Text color={colorMode === "dark" ? "white" : "black"}>{activity.address}</Text>
+                    <Text fontSize="sm" color={colorMode === "dark" ? "white" : "black"}>
+                      {activity.date}
+                    </Text>
+                  </VStack>
+                  <Spacer />
+                  <FaCommentAlt color={iconColor} cursor="pointer" onClick={() => window.open(`sms:${agent.agent_phone}?body=hello%20world`)} />
+                </VStack>
+        */
+        <Card maxW='sm' key={index} spacing={4} onClick={(e) => onPropertyClick(activity, e)}>
+          <CardBody>
+            <HStack>
+              <Text fontWeight="bold" color={colorMode === "dark" ? "white" : "black"}>New: ${activity.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
+              <Spacer />
+              <FaCommentAlt color={iconColor} cursor="pointer" onClick={() => window.open(`sms:${agent.agent_phone}?body=Hey ${agent.agent_name}! Saw your listing at ${activity.address}, congrats!`)} />
+            </HStack>
+            
+            <Image
+              src={activity.listing_photo || "https://ziptie.app/nop.png"}
+              alt='Listing Photo'
+              borderRadius='lg'
+              maxW={{ base: '100%', sm: '200px' }}
+              p={1} // Added padding
+            />
+            <Stack mt='6' spacing='3'>
+              <Text color={colorMode === "dark" ? "white" : "black"}>{activity.address}</Text>
+              <Text fontSize="sm" color={colorMode === "dark" ? "white" : "black"}>
+                {activity.date}
+              </Text>
+            </Stack>
+          </CardBody>
+          
+{/*           <Divider />
+          <CardFooter>
+            <ButtonGroup spacing='2'>
+              <Button variant='solid' colorScheme='blue'>
+                Buy now
+              </Button>
+              <Button variant='ghost' colorScheme='blue'>
+                Add to cart
+              </Button>
+            </ButtonGroup>
+          </CardFooter>
+ */}        </Card>
       ))}
-    </VStack>
+    </SimpleGrid>
   );
 };
 

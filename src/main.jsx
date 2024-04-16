@@ -2,7 +2,7 @@ import { RequiredAuthProvider, RedirectToLogin } from "@propelauth/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./pages/Layout";
+import LayoutTop from "./pages/LayoutTop";
 import Index from "./pages/Index";
 import Activity from "./pages/Activity";
 import Settings from "./pages/Settings";
@@ -21,14 +21,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   >
     <BrowserRouter>
       <ChakraProvider theme={theme}>
-        <Layout>
+        <LayoutTop>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/activity" element={<Activity />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/analytics" element={<Analytics />} />
           </Routes>
-        </Layout>
+        </LayoutTop>
       </ChakraProvider>
     </BrowserRouter>
   </RequiredAuthProvider>
