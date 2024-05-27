@@ -1,0 +1,31 @@
+{
+  "language": "JavaScript",
+  "installCommand": "npm install",
+  "formatCommand": "",
+  "buildCommand": "npm run build --verbose",
+  "style": "CSS",
+  "iconSet": "Material UI",
+  "componentExamples": "/src/pages/colors.js",
+  "apiEndpointsExamples": "/src/api/exampleEndpoint.js",
+  "pageExamples": "/src/pages/Activity.js",
+  "directories": {
+    "components": "/src",
+    "pages": "/src/pages/",
+    "styles": "/src/styles",
+    "staticAssets": "/public/"
+  },
+  "stateManagement": {
+    "tool": "None"
+  },
+  "testing": {
+    "writeTests": false
+  },
+  "storybook": {
+    "writeStories": true,
+    "storiesLocation": "/src/stories"
+  },
+  "envVariables": {
+    "exampleFile": "/.env.example"
+  },
+  "env": ""
+}
